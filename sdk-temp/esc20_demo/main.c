@@ -100,11 +100,11 @@
 
 /* Adjustables */
 #ifdef ENABLE_MIC_PROCESSING
-#define SAMPLE_SCALE_FACTOR    		4		// multiplies 16-bit samples by this scale factor before converting to 8-bit
-#define THRESHOLD_HIGH				350  	// voice detection threshold to find beginning of a keyword
-#define THRESHOLD_LOW				100  	// voice detection threshold to find end of a keyword
-#define SILENCE_COUNTER_THRESHOLD 	20 		// [>20] number of back to back CHUNK periods with avg < THRESHOLD_LOW to declare the end of a word
-#define PREAMBLE_SIZE				30*CHUNK// how many samples before beginning of a keyword to include
+#define SAMPLE_SCALE_FACTOR    		5//4		// multiplies 16-bit samples by this scale factor before converting to 8-bit
+#define THRESHOLD_HIGH				200//350  	// voice detection threshold to find beginning of a keyword
+#define THRESHOLD_LOW				50//100  	// voice detection threshold to find end of a keyword
+#define SILENCE_COUNTER_THRESHOLD 	80 		// [>20] number of back to back CHUNK periods with avg < THRESHOLD_LOW to declare the end of a word
+#define PREAMBLE_SIZE				2*CHUNK//30*CHUNK// how many samples before beginning of a keyword to include
 #define INFERENCE_THRESHOLD   		49 		// min probability (0-100) to accept an inference
 #else
 #define SAMPLE_SCALE_FACTOR    		1		// multiplies 16-bit samples by this scale factor before converting to 8-bit
@@ -137,9 +137,12 @@ typedef enum _mic_processing_state {
 } mic_processing_state;
 
 /* Set of detected words */
-const char keywords[NUM_OUTPUTS][15] = { "DOG", "ROOSTER", "FROG", "CAT", "BIRD",
-		"DRIPPING", "THUNDER", "TOILET", "BABY", "SNEEZE", "COUGH", "LAUGH", "KNOCK", "WASHING MACHINE", "ALARM",
-		"GLASS BREAK", "HELICOPTER", "SIREN", "BELL", "FIREWORKS", "Unknown" };
+const char keywords[NUM_OUTPUTS][15] = { "DOG", "ROOSTER", "COW", "FROG", "CAT", 
+										 "HEN", "BIRD", "SHEEP", "CROW", "CRICKET",
+										 "SNEEZE", "CLAP", "COUGH", "LAUGH", "SNORE", 
+										 "KNOCK", "ALARM", "GLASS BREAK", "SIREN", "GUN", 
+										 "Unknown" };
+		
 
 #ifndef ENABLE_MIC_PROCESSING
 
@@ -517,7 +520,11 @@ void I2SInit()
     req.bitOrder	= MXC_I2S_MSB_FIRST;
     /* I2S clock = PT freq / (2*(req.clkdiv + 1)) */
     /* I2S sample rate = I2S clock/64 = 16kHz */
-    req.clkdiv      = 5;
+    
+	
+	///!!req.clkdiv      = 5;
+	// make 8khz
+	req.clkdiv      = 6;
     req.rawData     = NULL;
     req.txData      = NULL;
     req.rxData      = i2s_rx_buffer;
@@ -942,20 +949,20 @@ void TFT_Intro(void) {
 	sprintf(buff, "Detectable sounds:    ");
 	TFT_Print(buff, 5, 70, urw_gothic_12_white_bg_grey);
 
-	sprintf(buff, "Dog, Rooster, Frog, Cat, Bird             ");
+	sprintf(buff, "Dog, Rooster, Cow, Frog, Cat,           ");
 	TFT_Print(buff, 1, 92, urw_gothic_12_white_bg_grey);
 
-	sprintf(buff, "WaterDrop, Thunder, ToiletFlush");
+	sprintf(buff, "Hen, Bird, Sheep, Crow, Cricket");
 	TFT_Print(buff, 1, 114, urw_gothic_12_white_bg_grey);
 	
-	sprintf(buff, "Baby,Sneeze,Cough,Laugh,knock              ");
+	sprintf(buff, "Sneeze,Clap,Cough,Laugh,Snore              ");
 	TFT_Print(buff, 1, 136, urw_gothic_12_white_bg_grey);
 
-	sprintf(buff, "WashMachine,Alarm,GlassBrk  ");
+	sprintf(buff, "Knock,Alarm,GlassBrk,Siren,Gun  ");
 	TFT_Print(buff, 1, 158, urw_gothic_12_white_bg_grey);
 
-	sprintf(buff, "Helicopter, Siren, Bell, Fireworks     ");
-	TFT_Print(buff, 1, 180, urw_gothic_12_white_bg_grey);
+	//sprintf(buff, "Helicopter, Siren, Airplane     ");
+	//TFT_Print(buff, 1, 180, urw_gothic_12_white_bg_grey);
 
 	sprintf(buff, "PRESS PB1 TO START!                    ");
 	TFT_Print(buff, 55, 210, urw_gothic_13_white_bg_grey);
