@@ -1,0 +1,58 @@
+# HWC (big data) configuration for KWS20v3
+
+arch: ai85esc14netv0
+dataset: ESC_COMBO_14
+
+# Define layer parameters in order of the layer sequence
+layers:
+- pad: 0
+  activate: ReLU
+  out_offset: 0x2000
+  processors: 0xffffffffffffffff
+  data_format: HWC
+  operation: Conv1d
+  kernel_size: 1
+- max_pool: 2
+  pool_stride: 2
+  pad: 1
+  activate: ReLU
+  out_offset: 0x0 # 0x2000
+  processors: 0x0003ffffffffffff
+  operation: Conv1d
+  kernel_size: 3
+- max_pool: 2
+  pool_stride: 2
+  pad: 1
+  activate: ReLU
+  out_offset: 0x2000
+  processors: 0xffffffffffffffff
+  operation: Conv1d
+  kernel_size: 3
+- pad: 0
+  activate: ReLU
+  out_offset: 0x0000
+  processors: 0xffffffffffffffff
+  operation: Conv1d
+  kernel_size: 3
+- max_pool: 2
+  pool_stride: 2
+  pad: 1
+  activate: ReLU
+  out_offset: 0x2000
+  processors: 0x0000ffffffffffff
+  operation: Conv1d
+  kernel_size: 3
+- max_pool: 2
+  pool_stride: 2
+  pad: 1
+  activate: ReLU
+  out_offset: 0x0000
+  processors: 0xffffffffffffffff
+  operation: Conv1d
+  kernel_size: 6
+  stride: 1
+- flatten: true
+  out_offset: 0x2000
+  processors: 0xffffffffffffffff
+  operation: MLP
+  output_width: 32
